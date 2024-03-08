@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <title>Terminal Typing Game</title>
+    <style>
+        body {
+            background-image: url('/imgs/linuxwp1.jpeg');
+            background-size: cover;
+            background-position: right;
+            background-repeat: no-repeat;
+            color: rgb(0, 255, 26);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .hackedcontainer {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            transform: translate(-10%, -10%);
+        }
+
+        .container2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .terminal,
+        .hackedterminal,
+        .terminal2 {
+            font-family: 'Menlo', monospace;
+            position: relative;
+            resize: both;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            max-width: 70vh;
+            max-height: 50vh;
+            min-width: 30vh;
+            min-height: 17vh;
+        }
+
+        .hackedterminal {
+            margin-right: 0;
+        }
+
+        .terminal2 {
+            margin-left: 0;
+        }
+
+        .hackedterminalHeader {
+            height: 1.75em;
+            background-color: #540000;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .hackedterminalBody {
+            padding: 2% 5% 0 2%;
+            background-color: #363636;
+            border-radius: 0 0 20px 20px;
+            overflow-y: auto;
+            border: solid 5px #171717;
+            height: calc(100% - 2.8em);
+            color: #ff0000
+        }
+
+        .terminalHeader {
+            height: 1.75em;
+            background-color: #2e2e2e;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .terminalBody {
+            padding: 2% 5% 0 2%;
+            background-color: #363636;
+            border-radius: 0 0 20px 20px;
+            overflow-y: auto;
+            border: solid 5px #171717;
+            height: calc(100% - 2.8em);
+        }
+
+        .hackedterminalBody input {
+            font-family: 'Menlo', monospace;
+            width: 100%;
+            height: 30px;
+            background-color: #363636;
+            border-width: 0;
+            color: #ff0000;
+            font-size: medium;
+            border: 0;
+        }
+
+        .terminalBody input {
+            font-family: 'Menlo', monospace;
+            width: 100%;
+            height: 30px;
+            background-color: #363636;
+            border-width: 0;
+            color: #00ff37;
+            font-size: medium;
+            border: 0;
+            animation: blink 1s infinite;
+        }
+
+        input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #00ff37;
+            animation: blink 1s infinite;
+        }
+
+        .hackedterminalBody input::before {
+            background-color: #ff0000;
+        }
+
+        .terminalBody input::before {
+            background-color: #00ff37;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        select {
+            color: #00ff00;
+            background-color: rgba(0, 0, 0, 0);
+            border-color: rgba(0, 0, 0, 0);
+            font-family: 'Menlo', monospace;
+            ;
+        }
+
+        #startButton {
+            background-color: rgba(0, 0, 0, 0);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 15px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            margin-left: 5px;
+            border-radius: 5px;
+            font-family: 'Menlo', monospace;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+        }
+
+        #startButton:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        .button {
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            margin: 8px 5px 0 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .buttonRed {
+            margin-left: 20px;
+            background-color: #ff6464;
+            transition: 0.2s ease-in-out;
+        }
+
+        .buttonRed:hover {
+            background-color: #860000;
+        }
+
+        .buttonGreen {
+            background-color: #64ff64;
+            transition: 0.2s ease-in-out;
+        }
+
+        .buttonGreen:hover {
+            background-color: #008600;
+        }
+
+        .buttonYellow {
+            background-color: #ffff64;
+            transition: 0.2s ease-in-out;
+        }
+
+        .buttonYellow:hover {
+            background-color: #868600;
+        }
+
+        #githubIcon {
+            float: right;
+            color: rgb(197, 197, 197);
+            transform: scale(1.3, 1.3);
+            margin-right: 25px;
+            transition: 0.2s ease-in-out;
+        }
+
+        #githubIcon:hover {
+            transform: scale(1.5, 1.5);
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        a {
+            color: fff;
+            transition: 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #EF4F4F;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="hackedcontainer">
+        <div class="hackedterminal">
+            <div class="hackedterminalHeader">
+                <div class="button buttonRed"></div>
+                <div class="button buttonGreen"></div>
+                <div class="button buttonYellow"></div>
+                <a href="https://github.com/micah1crandell" target="_blank"><i id="githubIcon"
+                        class="button fa fa-github"></i></a>
+            </div>
+            <div class="hackedterminalBody">
+                You are being hacked >:)<br>
+                Counter-hack the attacker to win<br>
+                > <input type="text" autofocus />
+            </div>
+        </div>
+    </div>
+
+    <div class="container2">
+        <div class="terminal terminal2">
+            <div class="terminalHeader">
+                <div class="button buttonRed"></div>
+                <div class="button buttonGreen"></div>
+                <div class="button buttonYellow"></div>
+                <a href="https://github.com/micah1crandell" target="_blank"><i id="githubIcon"
+                        class="button fa fa-github"></i></a>
+            </div>
+            <div class="terminalBody">
+                Type, type, type.<br>
+                <br>
+                Type the words you see in the hacked terminal<br>
+                <br>
+                Score: <span id="score">0</span><br>
+                Time: <span id="timer">30s</span><br>
+                Difficulty:
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <br>
+                >>> <input type="text" autofocus placeholder="Type here..." />
+                <button id="startButton">Start</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const hackedInput = document.querySelector('.hackedterminalBody input');
+            const playerInput = document.querySelector('.terminalBody input');
+            const scoreDisplay = document.querySelector('#score');
+            const timerDisplay = document.querySelector('#timer');
+            const difficultySelect = document.querySelector('#difficulty');
+            const startButton = document.querySelector('#startButton');
+            const timerOptions = {
+                easy: 30,
+                medium: 45,
+                hard: 60
+            };
+
+            const wordsByDifficulty = {
+                easy: [
+                    "nmap",
+                    "wireshark",
+                    "sql injection",
+                    "kali linux",
+                    "ip sweeper",
+                    "scripts",
+                    "mac spoofing",
+                    "firewall bypass",
+                    "zero-day exploit",
+                    "brute force",
+                    "backdoor access",
+                    "buffer overflow",
+                    "malware injection",
+                    "rootkit",
+                    "phishing attack",
+                    "social engineering",
+                    "cryptojacking",
+                    "packet sniffing",
+                    "denial of service",
+                    "man-in-the-middle",
+                    "keylogger",
+                    "trojan horse",
+                    "exploit payload",
+                    "dark web",
+                    "honeypot",
+                    "sandbox evasion",
+                    "vulnerability scanning",
+                    "cross-site scripting",
+                    "proxy server",
+                    "DNS poisoning",
+                    "malicious payload",
+                    "two-factor authentication",
+                    "SSL/TLS encryption",
+                    "hash collision",
+                    "botnet",
+                    "ransomware",
+                    "cybersecurity",
+                    "phreaking",
+                    "root access",
+                    "digital forensics",
+                    "penetration testing",
+                    "security audit",
+                    "bug bounty",
+                    "anonymity network",
+                    "VPN tunneling",
+                    "anonymous proxy",
+                    "cryptography",
+                    "white hat hacker",
+                    "black hat hacker",
+                    "red teaming",
+                    "blue teaming",
+                    "social engineering",
+                    "security token",
+                    "security patch",
+                    "firewall",
+                    "intrusion detection system",
+                    "endpoint protection",
+                    "security policy",
+                    "ethical hacking",
+                    "infosec",
+                    "cyber threat intelligence",
+                    "sandbox environment",
+                    "security awareness",
+                    "incident response",
+                    "digital footprint",
+                    "password cracking",
+                    "phishing email",
+                    "zero trust",
+                    "blockchain security",
+                    "Ethereum smart contract",
+                    "bug bounty program",
+                    "security posture",
+                ],
+                medium: [
+                    "nmap -p 22-80 -sS target_ip",
+                    "wireshark -i eth0",
+                    "sqlmap -u 'http://l.com/index.php?id=1'",
+                    "kali-linux-forensic",
+                    "sudo nmap -sn 192.168.1.0/24",
+                    "python malicious_script.py",
+                    "macchanger -r eth0",
+                    "exploit-db-search buffer overflow",
+                    "malware-inject payload.exe",
+                    "sudo rootkit-hunter",
+                    "setoolkit",
+                    "hydra -l username -P p.txt ssh://target_ip",
+                    "netcat -lvp 4444",
+                    "aircrack-ng -w w.txt -b 00:11:22:33:44:55",
+                    "msfconsole",
+                    "armitage",
+                    "metasploit",
+                    "sqlninja -m",
+                    "ssh-keygen -t rsa",
+                    "john --wordlist=p.txt hashfile",
+                    "nikto -h target_url",
+                    "nbtscan -r target_ip",
+                    "wafw00f -a target_url",
+                    "burp-suite",
+                    "crunch 8 12 -o wordlist.txt",
+                    "hping3 -c 10 -p 80 target_ip",
+                ],
+                hard: [
+                    "unicornscan -mT target_ip:a",
+                    "sslstrip -l 8080",
+                    "slowloris -p 80 -s 100",
+                    "ettercap -Tq -M arp:remote",
+                    "proxychains4 command_to_proxy",
+                    "dnschef --file /path/to/hosts.txt",
+                    "tcpdump -i eth0 -n -nn -s0 -v 'port 80'",
+                    "maltego",
+                    "w3af_console",
+                    "wpscan --url target_url",
+                    "sqlsus -u 'http://l.com/index.php?id=1'",
+                    "pyarmor pack -x --advanced",
+                    "gpg --gen-key",
+                    "ncrack -p 22-80 target_ip",
+                    "netdiscover -r 192.168.1.0/24",
+                    "proxychains4 wget http://l.com/file.zip",
+                    "responder -I eth0 -wrf",
+                    "john --format=NT --users=u.txt hashes.txt",
+                    "mitmproxy -T --host",
+                    "hashcat -m 500 -a 0 hashfile w.txt",
+                    "veil-framework",
+                    "beef-xss",
+                    "exploit-db-download 1337",
+                    "xsser --url target_url",
+                ]
+            };
+
+            let currentWordIndex = 0;
+            let isGameActive = false;
+            let score = 0;
+            let timeRemaining = 30;
+            let intervalId;
+
+            $('input[type=text]').on('focus', function () {
+                $('html, body').animate({
+                    scrollTop: $(this).offset().top
+                }, 500);
+            });
+
+            function startGame() {
+                playerInput.value = '';
+                hackedInput.value = '';
+                playerInput.style.animation = 'none';
+                resetGame();
+                isGameActive = true;
+                displayNextWord();
+                const selectedDifficulty = difficultySelect.value;
+                timeRemaining = timerOptions[selectedDifficulty];
+                timerDisplay.textContent = 'Time: ' + timeRemaining + 's';
+                playerInput.focus();
+                setInterval(updateTime, 1000);
+            }
+
+            function resetGame() {
+                currentWordIndex = 0;
+                score = 0;
+                scoreDisplay.textContent = 'Score: 0';
+            }
+
+            function displayNextWord() {
+                const difficulty = difficultySelect.value;
+                const words = wordsByDifficulty[difficulty];
+
+                if (currentWordIndex < words.length) {
+                    const randomIndex = Math.floor(Math.random() * words.length);
+                    const word = words[randomIndex];
+                    typeWord(word, 0);
+                    currentWordIndex++;
+                } else {
+                    endGame();
+                }
+            }
+
+            function typeWord(word, index) {
+                if (index < word.length && isGameActive) {
+                    hackedInput.value = word.slice(0, index + 1);
+                    setTimeout(() => typeWord(word, index + 1), 100);
+                } else {
+                    setTimeout(displayNextWordWithTypingAnimation, 500);
+                }
+            }
+
+            function updateTime() {
+                if (timeRemaining > 0 && isGameActive) {
+                    timeRemaining--;
+                    timerDisplay.textContent = 'Time: ' + timeRemaining + 's';
+                } else {
+                    endGame();
+                }
+            }
+
+            function endGame() {
+                isGameActive = false;
+                hackedInput.value = 'Game Over. Your score: ' + score;
+                startButton.style.display = 'block';
+                playerInput.style.animation = 'blink 1s infinite';
+            }
+
+            function setTimerDisplay() {
+                const selectedDifficulty = difficultySelect.value;
+                const selectedTimeLimit = timerOptions[selectedDifficulty];
+                timerDisplay.textContent = selectedTimeLimit + 's';
+            }
+
+            difficultySelect.addEventListener('change', function () {
+                setTimerDisplay();
+            });
+
+            playerInput.addEventListener('input', function () {
+                if (isGameActive && playerInput.value.length > 0) {
+                    if (playerInput.value === hackedInput.value) {
+                        playerInput.value = '';
+                        score++;
+                        scoreDisplay.textContent = 'Score: ' + score;
+                        displayNextWord();
+                    }
+                }
+            });
+
+            startButton.addEventListener('click', function () {
+                startButton.style.display = 'none';
+                startGame();
+            });
+        });
+
+    </script>
+
+
+</body>
+
+</html>
