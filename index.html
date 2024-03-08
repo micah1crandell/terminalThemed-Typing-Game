@@ -10,6 +10,7 @@
     <title>Terminal Typing Game</title>
     <style>
         body {
+            background-color: #151515;
             background-image: url('/imgs/background1.png');
             background-size: cover;
             background-position: right;
@@ -345,6 +346,7 @@
                 <br>
                 Type the words you see in the hacked terminal<br>
                 <br>
+                High Score: <span id="highScore">0</span><br>
                 Score: <span id="score">0</span><br>
                 Time: <span id="timer">30s</span><br>
                 Difficulty:
@@ -529,6 +531,15 @@
             let score = 0;
             let timeRemaining = 30;
             let intervalId;
+            let highScore = localStorage.getItem('highScore') || 0;
+
+            function updateHighScore() {
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('highScore', highScore);
+                    document.getElementById('highScore').textContent = highScore;
+                }
+            }
 
             $('input[type=text]').on('focus', function () {
                 $('html, body').animate({
@@ -594,6 +605,7 @@
                 hackedInput.value = 'Game Over. Your score: ' + score;
                 startButton.style.display = 'block';
                 playerInput.style.animation = 'blink 1s infinite';
+                updateHighScore();
             }
 
             function setTimerDisplay() {
