@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <title>Terminal Typing Game</title>
     <style>
         body {
-            background-image: url('/imgs/linuxwp1.jpeg');
+            background-image: url('/imgs/background1.png');
             background-size: cover;
             background-position: right;
             background-repeat: no-repeat;
@@ -231,11 +232,88 @@
         a:hover {
             color: #EF4F4F;
         }
+
+        #backgroundSelector {
+            font-family: 'Menlo', monospace;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 999;
+        }
+
+        #settingsIcon {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+            z-index: 1000;
+            color: #09ff00;
+            font-size: 24px;
+        }
+
+        #settingsIcon:hover {
+            color: #00ff00;
+            border: #00ff00 2px solid;
+        }
+
+        #settingsModal {
+            font-family: 'Menlo', monospace;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        #settingsModalContent {
+            font-size: small;
+            background: #2f2f2f;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        #closeSettingsButton {
+            color: #00ff00;
+            background-color: rgba(0, 0, 0, 0);
+            border-color: rgba(0, 0, 0, 0);
+            font-family: 'Menlo', monospace;
+        }
+
+        #closeSettingsButton:hover {
+            color: #00ff00;
+            border: #00ff00 2px solid;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
+    <div id="settingsIcon">
+        <i class="fas fa-cog"></i>
+    </div>
+
+    <div id="settingsModal">
+        <div id="settingsModalContent">
+            <label for="backgroundSelect">Choose Background: </label>
+            <select id="backgroundSelect" onchange="changeBackground()">
+                <option value="default">Default</option>
+                <option value="background1">Linux 1</option>
+                <option value="background2">Linux 2</option>
+                <option value="background3">MacOS 1</option>
+                <option value="background4">MacOS 2</option>
+                <option value="background5">Windows 1</option>
+                <option value="background6">Windows 2</option>
+            </select>
+            <input type="file" id="customBackground" style="display: none;" accept="image/*" onchange="handleFile()">
+            <button id="closeSettingsButton">Close</button>
+        </div>
+    </div>
+
     <div class="hackedcontainer">
         <div class="hackedterminal">
             <div class="hackedterminalHeader">
@@ -295,6 +373,25 @@
                 medium: 45,
                 hard: 60
             };
+
+            var settingsIcon = document.getElementById('settingsIcon');
+            var settingsModal = document.getElementById('settingsModal');
+            var closeSettingsButton = document.getElementById('closeSettingsButton');
+
+            settingsIcon.addEventListener('click', function () {
+                toggleSettingsModal();
+            });
+
+            closeSettingsButton.addEventListener('click', function () {
+                toggleSettingsModal();
+            });
+
+            function toggleSettingsModal() {
+                settingsModal.style.display = (settingsModal.style.display === 'none' || settingsModal.style.display === '') ? 'flex' : 'none';
+            }
+
+            var backgroundSelect = document.getElementById('backgroundSelect');
+            backgroundSelect.addEventListener('change', changeBackground);
 
             const wordsByDifficulty = {
                 easy: [
@@ -450,7 +547,7 @@
                 timeRemaining = timerOptions[selectedDifficulty];
                 timerDisplay.textContent = 'Time: ' + timeRemaining + 's';
                 playerInput.focus();
-                setInterval(updateTime, 1000);
+                setTimeout(updateTime, 1000);
             }
 
             function resetGame() {
@@ -486,6 +583,7 @@
                 if (timeRemaining > 0 && isGameActive) {
                     timeRemaining--;
                     timerDisplay.textContent = 'Time: ' + timeRemaining + 's';
+                    setTimeout(updateTime, 1000); // Use setTimeout for a recursive call
                 } else {
                     endGame();
                 }
@@ -502,6 +600,14 @@
                 const selectedDifficulty = difficultySelect.value;
                 const selectedTimeLimit = timerOptions[selectedDifficulty];
                 timerDisplay.textContent = selectedTimeLimit + 's';
+            }
+
+            function changeBackground() {
+                var select = document.getElementById('backgroundSelect');
+                var body = document.body;
+
+                body.style.backgroundImage = 'url(/imgs/' + select.value + '.png)';
+                console.log('Changing background to:', select.value);
             }
 
             difficultySelect.addEventListener('change', function () {
